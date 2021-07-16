@@ -43,7 +43,11 @@ public class CountContainersByNameStatement extends AbstractCosmosContainerState
 
     @Override
     public long queryForLong(final CosmosLiquibaseDatabase database) {
-        return database.getCosmosDatabase().readAllContainers().stream().filter(c -> c.getId().equals(getContainerId())).count();
+        return database.getCosmosDatabase()
+                .readAllContainers()
+                .stream()
+                .filter(c -> c.getId().equals(getContainerId()))
+                .count();
     }
 
 }

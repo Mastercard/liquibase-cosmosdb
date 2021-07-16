@@ -20,124 +20,54 @@ package liquibase.ext.cosmosdb.changelog;
  * #L%
  */
 
-import liquibase.Scope;
-import liquibase.changelog.ChangeLogHistoryServiceFactory;
 import liquibase.database.core.H2Database;
-import liquibase.executor.ExecutorService;
-import liquibase.ext.cosmosdb.database.CosmosConnection;
 import liquibase.ext.cosmosdb.database.CosmosLiquibaseDatabase;
-import liquibase.nosql.executor.NoSqlExecutor;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-
+import static liquibase.ext.cosmosdb.database.CosmosLiquibaseDatabase.COSMOSDB_PRODUCT_NAME;
 import static liquibase.plugin.Plugin.PRIORITY_SPECIALIZED;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(MockitoExtension.class)
 class CosmosHistoryServiceTest {
 
-    protected CosmosLiquibaseDatabase cosmosLiquibaseDatabase;
-    protected CosmosHistoryService cosmosHistoryService;
-    protected NoSqlExecutor cosmosExecutor;
-    protected CosmosConnection cosmosConnection;
+    @Mock
+    private CosmosLiquibaseDatabase database;
 
-    @BeforeEach
-    protected void setUpEach() {
-        cosmosConnection = new CosmosConnection();
-        cosmosLiquibaseDatabase = new CosmosLiquibaseDatabase();
-        cosmosLiquibaseDatabase.setConnection(cosmosConnection);
-        cosmosHistoryService = (CosmosHistoryService) ChangeLogHistoryServiceFactory.getInstance().getChangeLogService(cosmosLiquibaseDatabase);
-        cosmosExecutor = (NoSqlExecutor) Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor(NoSqlExecutor.EXECUTOR_NAME, cosmosLiquibaseDatabase);
-        cosmosHistoryService.reset();
-        cosmosHistoryService.resetDeploymentId();
+    private CosmosHistoryService cosmosHistoryService;
+
+    @BeforeAll
+    void setUp() {
+        cosmosHistoryService = new CosmosHistoryService();
     }
 
     @Test
-    void testGetPriority() {
+    void getPriorityTest() {
         assertThat(cosmosHistoryService.getPriority()).isEqualTo(PRIORITY_SPECIALIZED);
     }
 
     @Test
-    void testSupports() {
-        assertThat(cosmosHistoryService.supports(cosmosLiquibaseDatabase)).isTrue();
-        assertThat(cosmosHistoryService.supports(new H2Database())).isFalse();
+    void supportsTest() {
+        when(database.getDatabaseProductName()).thenReturn(COSMOSDB_PRODUCT_NAME);
+
+        assertAll(
+            () ->  assertThat(cosmosHistoryService.supports(database)).isTrue(),
+            () ->  assertThat(cosmosHistoryService.supports(new H2Database())).isFalse()
+        );
 
     }
 
     @Test
-    void testGetDatabaseChangeLogTableName() {
-        assertThat(cosmosHistoryService.getDatabaseChangeLogTableName()).isEqualTo(cosmosLiquibaseDatabase.getDatabaseChangeLogTableName());
-    }
-
-    @Test
-    void testCanCreateChangeLogTable() {
+    void canCreateChangeLogTableTest() {
         assertThat(cosmosHistoryService.canCreateChangeLogTable()).isTrue();
-    }
 
-    @SneakyThrows
-    @Test
-    void testInit() {
-
-    }
-
-    @SneakyThrows
-    @Test
-    void testReset() {
-
-    }
-
-    @Test
-    void testUpgradeChecksums() {
-    }
-
-    @Test
-    void testGetRanChangeSets() {
-
-    }
-
-    @Test
-    void testReplaceChecksum()  {
-
-    }
-
-    @Test
-    void testGetRanChangeSet()  {
-
-    }
-
-    @Test
-    void testSetExecType() {
-    }
-
-    @Test
-    void testRemoveFromHistory()  {
-
-    }
-
-    @SneakyThrows
-    @Test
-    void testGetNextSequenceValue() {
-
-    }
-
-    @Test
-    void testTag() {
-    }
-
-    @Test
-    void testTagExists() {
-    }
-
-    @Test
-    void testClearAllCheckSums() {
-    }
-
-    @Test
-    void testDestroy() {
-
-        
     }
 }

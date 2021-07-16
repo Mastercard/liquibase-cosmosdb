@@ -1,8 +1,11 @@
 package liquibase.ext.cosmosdb.persistence;
 
 import com.azure.cosmos.CosmosContainer;
-import com.azure.cosmos.models.*;
+import com.azure.cosmos.models.PartitionKey;
+import com.azure.cosmos.models.SqlParameter;
+import com.azure.cosmos.models.SqlQuerySpec;
 import liquibase.ext.cosmosdb.statement.JsonUtils;
+import liquibase.nosql.changelog.AbstractNoSqlItemToDocumentConverter;
 import lombok.Getter;
 
 import java.util.List;
@@ -18,9 +21,9 @@ public abstract class AbstractRepository<T> {
     private final CosmosContainer container;
 
     @Getter
-    private final AbstractItemToDocumentConverter<T, Map<String, Object>> converter;
+    private final AbstractNoSqlItemToDocumentConverter<T, Map<String, Object>> converter;
 
-    public AbstractRepository(final CosmosContainer container, final AbstractItemToDocumentConverter<T, Map<String, Object>> converter) {
+    public AbstractRepository(final CosmosContainer container, final AbstractNoSqlItemToDocumentConverter <T, Map<String, Object>> converter) {
         this.container = container;
         this.converter = converter;
     }

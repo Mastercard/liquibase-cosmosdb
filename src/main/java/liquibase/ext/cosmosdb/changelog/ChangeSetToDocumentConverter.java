@@ -1,10 +1,30 @@
 package liquibase.ext.cosmosdb.changelog;
 
+/*-
+ * #%L
+ * Liquibase CosmosDB Extension
+ * %%
+ * Copyright (C) 2020 Mastercard
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import liquibase.ContextExpression;
 import liquibase.Labels;
 import liquibase.change.CheckSum;
 import liquibase.changelog.ChangeSet;
-import liquibase.ext.cosmosdb.persistence.AbstractItemToDocumentConverter;
+import liquibase.nosql.changelog.AbstractNoSqlItemToDocumentConverter;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,9 +32,13 @@ import java.util.Map;
 
 import static com.azure.cosmos.implementation.Constants.Properties.ID;
 import static java.util.Optional.ofNullable;
-import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.*;
+import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.AND;
+import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.CLOSE_BRACKET;
+import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.COMMA;
+import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.OPEN_BRACKET;
+import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.WHITESPACE;
 
-public class ChangeSetToDocumentConverter extends AbstractItemToDocumentConverter<CosmosRanChangeSet, Map<String, Object>> {
+public class ChangeSetToDocumentConverter extends AbstractNoSqlItemToDocumentConverter<CosmosRanChangeSet, Map<String, Object>> {
 
     @Override
     public Map<String, Object> toDocument(final CosmosRanChangeSet item) {

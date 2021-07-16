@@ -86,6 +86,9 @@ class CosmosConnectionStringTest {
         assertThat(fromJsonConnectionString("cosmosdb://{\"databaseName\" : \"db1\"}").getProperty(CosmosConnectionString.DATABASE_NAME_PROPERTY)).hasValue("db1");
         assertThat(fromJsonConnectionString("cosmosdb://{\"databaseName\" : \"db1\"}").getDatabaseName()).hasValue("db1");
 
+        assertThatIllegalArgumentException().isThrownBy(() -> fromJsonConnectionString(""));
+        assertThatIllegalArgumentException().isThrownBy(() -> fromJsonConnectionString("mongodb://wrong driver name"));
+
         final CosmosConnectionString cosmosConnectionString
                 = fromJsonConnectionString("cosmosdb://{\"accountEndpoint\" : \"http://localhost:8080/\", \"accountKey\" : \"key\", \"databaseName\" : \"db1\"}");
         assertThat(cosmosConnectionString.getAccountEndpoint()).hasValue("http://localhost:8080/");
@@ -108,6 +111,9 @@ class CosmosConnectionStringTest {
 
         assertThat(fromUrlConnectionString("cosmosdb://localhost:key@localhost:8080/db1?accountKey=key").getProperty(CosmosConnectionString.DATABASE_NAME_PROPERTY)).hasValue("db1");
         assertThat(fromUrlConnectionString("cosmosdb://localhost:key@localhost:8080/db1?accountKey=key").getDatabaseName()).hasValue("db1");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> fromUrlConnectionString(""));
+        assertThatIllegalArgumentException().isThrownBy(() -> fromUrlConnectionString("mongodb://wrong driver name"));
 
         final CosmosConnectionString cosmosConnectionString
                 = fromUrlConnectionString("cosmosdb://localhost:key@localhost:8080/db1?accountKey=key");

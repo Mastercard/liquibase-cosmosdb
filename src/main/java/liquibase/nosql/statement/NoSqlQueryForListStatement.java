@@ -24,8 +24,8 @@ import liquibase.nosql.database.AbstractNoSqlDatabase;
 
 import java.util.List;
 
-public interface NoSqlQueryForListStatement <D extends AbstractNoSqlDatabase, T>{
+public interface NoSqlQueryForListStatement <DB extends AbstractNoSqlDatabase, T>{
 
-    List<T> queryForList(D database);
+    List<T> queryForList(DB database);
 
 }

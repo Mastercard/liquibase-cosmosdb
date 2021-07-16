@@ -60,6 +60,8 @@
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <sonar.coverage.exclusions>**/AbstractNoSqlDatabase.java,**/AbstractNoSqlLockService.java,**/AbstractNoSqlHistoryService.java,**/AbstractRepository.java,
+            **/AbstractNoSqlItemToDocumentConverter.java,**/NoSqlExecutor.java,**/JsonNoSqlChangeLogParser.java,**/CosmosHistoryService.java</sonar.coverage.exclusions>
     </properties>
     <dependencies>
         <dependency>

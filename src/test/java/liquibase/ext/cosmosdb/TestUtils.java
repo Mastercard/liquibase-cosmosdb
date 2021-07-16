@@ -20,6 +20,9 @@ package liquibase.ext.cosmosdb;
  * #L%
  */
 
+import liquibase.ContextExpression;
+import liquibase.Labels;
+import liquibase.change.CheckSum;
 import liquibase.changelog.ChangeLogParameters;
 import liquibase.changelog.ChangeSet;
 import liquibase.changelog.DatabaseChangeLog;
@@ -32,6 +35,9 @@ import liquibase.util.file.FilenameUtils;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -43,6 +49,24 @@ public final class TestUtils {
     public static final String DB_CONNECTION_URI_PROPERTY = "db.connection.uri";
     public static final String DATABASE_CHANGE_LOG_TABLE_NAME = "DATABASECHANGELOG";
     public static final String DATABASE_CHANGE_LOG_LOCK_TABLE_NAME = "DATABASECHANGELOGLOCK";
+
+    public static final String TEST_UUID = "uuid2";
+    public static final Date TEST_DATE = new Date();
+    public static final CheckSum TEST_CHECKSUM = CheckSum.compute("CheckSumString");
+    public static final Labels TEST_LABELS = new Labels("Label1", "Label2");
+    public static final ContextExpression TEST_CONTEXT_EXPRESSION = new ContextExpression("context1", "context2");
+    public static final Collection<ContextExpression> TEST_INHERITABLE_EXPRESSION =
+        Collections.singletonList(new ContextExpression("inheritableContext1", "inheritableContext2"));
+    public static final String TEST_CONTAINER_ID = "test";
+    public static final String TEST_CONTAINER_PROPERTIES = "{ \"partitionKey\": {\"paths\": [\"/partitionField1\"], \"kind\": \"Hash\" } }";
+    public static final String TEST_STORE_PROC_PROPERTIES = "{\"body\": \"function () {Sample body}\", \"id\": \"sproc_1\"}";
+    public static final String TEST_THROUGHPUT_PROPERTIES = "{\"maxThroughput\": 800}";
+    public static final String TEST_UPSERT_ITEM_STATEMENT = "{\"id\" : \"1\", \"lastName\" : \"LastName1\", \"firstName\" : \"FirstName1\", \"age\" : \"99\"}";
+    public static final String TEST_COSMOS_DB_CONNECTION_STRING = "cosmosdb://ech-0a9d9346:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==@ech-0a9d9346:8080/testdb1";
+    public static final String TEST_WRONG_CONNECTION_STRING = "mongodb://wrong driver name";
+    public static final String TEST_JSON_DOCUMENT = "{\"id\" : \"1\", \"lastName\" : \"LastNameRemained1\", \"firstName\" : \"FirstNameShouldBeChanged1\"}";
+    public static final String TEST_JSON_QUERY= "{\"query\": \"SELECT * FROM person f WHERE f.id = @id\", \"parameters\": [ {\"name\": \"@id\", \"value\": \"1\" }] }";
+
 
     @SneakyThrows
     public static Properties loadProperties() {

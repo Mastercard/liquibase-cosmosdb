@@ -21,12 +21,19 @@ package liquibase.ext.cosmosdb.statement;
  */
 
 import com.azure.cosmos.implementation.Document;
+import com.azure.cosmos.models.CosmosContainerProperties;
+import com.azure.cosmos.models.CosmosStoredProcedureProperties;
 import com.azure.cosmos.models.SqlQuerySpec;
 import com.azure.cosmos.models.ThroughputProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.Map;
 
+import static liquibase.ext.cosmosdb.TestUtils.TEST_CONTAINER_ID;
+import static liquibase.ext.cosmosdb.TestUtils.TEST_THROUGHPUT_PROPERTIES;
 import static liquibase.ext.cosmosdb.statement.JsonUtils.mergeDocuments;
 import static liquibase.ext.cosmosdb.statement.JsonUtils.orEmptyDocument;
 import static liquibase.ext.cosmosdb.statement.JsonUtils.toThroughputProperties;
@@ -220,5 +227,40 @@ class JsonUtilsTest {
                 .returns(800, ThroughputProperties::getAutoscaleMaxThroughput);
 
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> toThroughputProperties(" {\"maxThroughput\": 800}").getManualThroughput());
+    }
+
+    @Test
+    void testCosmosStoredProcedureProperties(){
+
+        String jsonRequest = "{\"body\": \"function () {Sample body}\", \"id\": \"sproc_1\"}";
+
+        CosmosStoredProcedureProperties actual = JsonUtils.orEmptyStoredProcedureProperties(jsonRequest);
+        assertThat(actual.getId()).isEqualTo("sproc_1");
+        assertThat(actual.getBody()).isEqualTo("function () {Sample body}");
+
+        //null
+        jsonRequest = "{}";
+        actual = JsonUtils.orEmptyStoredProcedureProperties(jsonRequest);
+        assertThat(actual.getId()).isNull();
+        assertThat(actual.getBody()).isNull();
+    }
+
+    @SneakyThrows
+    @Test
+    void testToContainerProperties(){
+        ObjectMapper mapper = new ObjectMapper();
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("liquibase/ext/test.json").getFile());
+        Map<String, String> containerPropertiesMap = mapper.readValue(file, Map.class);
+        final String containerPropertiesJson = mapper.writeValueAsString(containerPropertiesMap);
+
+        CosmosContainerProperties actual = JsonUtils.toContainerProperties( TEST_CONTAINER_ID, containerPropertiesJson);
+        assertThat(actual.getId()).isEqualTo(TEST_CONTAINER_ID);
+        assertThat(actual.getPartitionKeyDefinition()).isNotNull();
+        assertThat(actual.getUniqueKeyPolicy()).isNotNull();
+        assertThat(actual.getConflictResolutionPolicy()).isNotNull();
+        assertThat(actual.getDefaultTimeToLiveInSeconds()).isNotNull().isEqualTo(100);
+        assertThat(actual.getAnalyticalStoreTimeToLiveInSeconds()).isNotNull().isEqualTo(100);
+
     }
 }

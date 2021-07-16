@@ -45,6 +45,7 @@
     "kind": "Hash"
   },
   "defaultTtl": 100,
+  "analyticalStorageTtl": 100,
   "uniqueKeyPolicy": {
     "uniqueKeys": [
       {

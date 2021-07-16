@@ -49,7 +49,8 @@ public class CountDocumentsInContainerStatement extends AbstractCosmosContainerS
     @Override
     public long queryForLong(final CosmosLiquibaseDatabase database) {
         final CosmosContainer cosmosContainer = database.getCosmosDatabase().getContainer(getContainerId());
-        return cosmosContainer.queryItems(QUERY_SELECT_ALL, null, Map.class).stream().count();
+        return cosmosContainer.queryItems(QUERY_SELECT_ALL, null, Map.class)
+                .stream().count();
     }
 
 }

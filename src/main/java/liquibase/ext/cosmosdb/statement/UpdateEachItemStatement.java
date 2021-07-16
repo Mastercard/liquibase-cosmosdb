@@ -32,7 +32,7 @@ import static liquibase.ext.cosmosdb.statement.JsonUtils.extractPartitionKeyPath
 import static liquibase.ext.cosmosdb.statement.JsonUtils.mergeDocuments;
 import static liquibase.ext.cosmosdb.statement.JsonUtils.orEmptySqlQuerySpec;
 
-public class UpdateEachItemStatement extends CreateItemStatement {
+public class UpdateEachItemStatement extends CreateItemStatement {//NOSONAR
 
     public static final String COMMAND_NAME = "updateEachItem";
 

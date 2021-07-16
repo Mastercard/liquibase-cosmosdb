@@ -1,56 +1,37 @@
 package liquibase.nosql.changelog;
 
-import liquibase.ContextExpression;
-import liquibase.Labels;
+import liquibase.util.StringUtil;
 
-import java.util.Collection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.AND;
-import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.CLOSE_BRACKET;
-import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.COMMA;
-import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.OPEN_BRACKET;
-import static liquibase.sqlgenerator.core.MarkChangeSetRanGenerator.WHITESPACE;
+import static java.util.Objects.isNull;
 
 public abstract class AbstractNoSqlItemToDocumentConverter<I, D>  {
+
+    public static final String ISO_8601_UTC_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    public final SimpleDateFormat dateFormatter = new SimpleDateFormat(ISO_8601_UTC_DATETIME_FORMAT);
 
     public abstract D toDocument(I item);
 
     public abstract I fromDocument(D document);
 
-    public String buildLabels(Labels labels) {
-        if (labels == null || labels.isEmpty()) {
+    public Date toDate(final String dateString) {
+        try {
+            if (isNull(StringUtil.trimToNull(dateString))) {
+                return null;
+            }
+            return dateFormatter.parse(dateString);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException ("Cannot parse to Date: [" + dateString + "] with pattern: " + ISO_8601_UTC_DATETIME_FORMAT, e);
+        }
+    }
+
+    public String fromDate(final Date date) {
+        if (isNull(date)) {
             return null;
         }
-        return labels.toString();
+        return dateFormatter.format(date);
     }
 
-    public String buildFullContext(final ContextExpression contextExpression, final Collection<ContextExpression> inheritableContexts) {
-        if ((contextExpression == null) || contextExpression.isEmpty()) {
-            return null;
-        }
-
-        StringBuilder contextExpressionString = new StringBuilder();
-        boolean notFirstContext = false;
-        for (ContextExpression inheritableContext : inheritableContexts) {
-            appendContext(contextExpressionString, inheritableContext.toString(), notFirstContext);
-            notFirstContext = true;
-        }
-        appendContext(contextExpressionString, contextExpression.toString(), notFirstContext);
-
-        return contextExpressionString.toString();
-    }
-
-    private void appendContext(StringBuilder contextExpression, String contextToAppend, boolean notFirstContext) {
-        boolean complexExpression = contextToAppend.contains(COMMA) || contextToAppend.contains(WHITESPACE);
-        if (notFirstContext) {
-            contextExpression.append(AND);
-        }
-        if (complexExpression) {
-            contextExpression.append(OPEN_BRACKET);
-        }
-        contextExpression.append(contextToAppend);
-        if (complexExpression) {
-            contextExpression.append(CLOSE_BRACKET);
-        }
-    }
 }

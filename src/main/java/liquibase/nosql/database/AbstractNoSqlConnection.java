@@ -53,20 +53,6 @@ public abstract class AbstractNoSqlConnection implements DatabaseConnection {
         return null;
     }
 
-    @Override
-    public String getDatabaseProductVersion() throws DatabaseException {
-        return "0";
-    }
-
-    @Override
-    public int getDatabaseMajorVersion() throws DatabaseException {
-        return 0;
-    }
-
-    @Override
-    public int getDatabaseMinorVersion() throws DatabaseException {
-        return 0;
-    }
 
     @Override
     public void attached(final Database database) {

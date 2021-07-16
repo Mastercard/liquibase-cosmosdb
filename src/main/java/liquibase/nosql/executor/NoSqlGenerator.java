@@ -30,19 +30,21 @@ import liquibase.sqlgenerator.core.AbstractSqlGenerator;
 public class NoSqlGenerator extends AbstractSqlGenerator<AbstractNoSqlStatement> {
 
     @Override
-    public ValidationErrors validate(AbstractNoSqlStatement statement, Database database,
-                                     SqlGeneratorChain<AbstractNoSqlStatement> sqlGeneratorChain) {
+    public ValidationErrors validate(final AbstractNoSqlStatement statement,
+                                     final Database database,
+                                     final SqlGeneratorChain<AbstractNoSqlStatement> sqlGeneratorChain) {
         return null;
     }
 
     @Override
-    public Sql[] generateSql(AbstractNoSqlStatement statement, Database database,
-                             SqlGeneratorChain<AbstractNoSqlStatement> sqlGeneratorChain) {
+    public Sql[] generateSql(final AbstractNoSqlStatement statement,
+                             final Database database,
+                             final SqlGeneratorChain<AbstractNoSqlStatement> sqlGeneratorChain) {
         return new Sql[0];
     }
 
     @Override
-    public boolean generateStatementsIsVolatile(Database database) {
+    public boolean generateStatementsIsVolatile(final Database database) {
         return true;
     }
 }

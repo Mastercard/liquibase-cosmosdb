@@ -22,8 +22,8 @@ package liquibase.nosql.statement;
 
 import liquibase.nosql.database.AbstractNoSqlDatabase;
 
-public interface NoSqlQueryForObjectStatement<D extends AbstractNoSqlDatabase> {
+public interface NoSqlQueryForObjectStatement<DB extends AbstractNoSqlDatabase> {
 
-   <T> T queryForObject(D database, Class<T> requiredType);
+   <T> T queryForObject(DB database, Class<T> requiredType);
 
 }

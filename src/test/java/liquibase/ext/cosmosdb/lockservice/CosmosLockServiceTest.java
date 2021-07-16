@@ -3,11 +3,17 @@ package liquibase.ext.cosmosdb.lockservice;
 import liquibase.database.core.PostgresDatabase;
 import liquibase.ext.cosmosdb.database.CosmosLiquibaseDatabase;
 import liquibase.lockservice.LockServiceFactory;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CosmosLockServiceTest {
+
+    @Test
+    void getExecutorTest() {
+        assertThat(new CosmosLockService().getExecutor()).isNotNull();
+    }
 
     @Test
     void getPriority() {
@@ -36,5 +42,4 @@ class CosmosLockServiceTest {
         final CosmosLockService cosmosLockService = (CosmosLockService) LockServiceFactory.getInstance().getLockService(database);
         assertThat(cosmosLockService.getDatabaseChangeLogLockTableName()).isEqualTo(database.getDatabaseChangeLogLockTableName());
     }
-
 }

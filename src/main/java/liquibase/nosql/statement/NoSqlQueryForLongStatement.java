@@ -22,8 +22,8 @@ package liquibase.nosql.statement;
 
 import liquibase.nosql.database.AbstractNoSqlDatabase;
 
-public interface NoSqlQueryForLongStatement <D extends AbstractNoSqlDatabase>{
+public interface NoSqlQueryForLongStatement <DB extends AbstractNoSqlDatabase>{
 
-   long queryForLong(D database) ;
+   long queryForLong(DB database) ;
 
 }

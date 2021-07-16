@@ -47,7 +47,6 @@ class CosmosLiquibaseIT extends AbstractCosmosWithConnectionIntegrationTest {
 
     protected SelectChangeLogRanChangeSetsStatement findAllRanChangeSets;
 
-
     @BeforeEach
     protected void setUpEach() {
         super.setUpEach();

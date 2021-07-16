@@ -22,8 +22,8 @@ package liquibase.nosql.statement;
 
 import liquibase.nosql.database.AbstractNoSqlDatabase;
 
-public interface NoSqlUpdateStatement<D extends AbstractNoSqlDatabase> {
+public interface NoSqlUpdateStatement<DB extends AbstractNoSqlDatabase> {
 
-   int update(D database);
+   int update(DB database);
 
 }

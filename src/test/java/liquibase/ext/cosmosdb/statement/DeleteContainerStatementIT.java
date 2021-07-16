@@ -20,11 +20,14 @@ package liquibase.ext.cosmosdb.statement;
  * #L%
  */
 
+import com.azure.cosmos.CosmosException;
 import liquibase.ext.cosmosdb.AbstractCosmosWithConnectionIntegrationTest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static org.assertj.core.api.Assertions.*;
 
 class DeleteContainerStatementIT extends AbstractCosmosWithConnectionIntegrationTest {
 
@@ -35,11 +38,9 @@ class DeleteContainerStatementIT extends AbstractCosmosWithConnectionIntegration
     @Test
     void testExecute() {
 
-        final CreateContainerStatement createContainerStatement1
-                = new CreateContainerStatement(CONTAINER_NAME_1);
+        final CreateContainerStatement createContainerStatement1 = new CreateContainerStatement(CONTAINER_NAME_1);
 
-        final CreateContainerStatement createContainerStatement2
-                = new CreateContainerStatement(CONTAINER_NAME_2);
+        final CreateContainerStatement createContainerStatement2 = new CreateContainerStatement(CONTAINER_NAME_2);
 
         createContainerStatement1.execute(database);
         createContainerStatement2.execute(database);
@@ -47,12 +48,31 @@ class DeleteContainerStatementIT extends AbstractCosmosWithConnectionIntegration
         final Long countAfterCreated = cosmosDatabase.readAllContainers().stream().count();
         assertThat(countAfterCreated).isEqualTo(2L);
 
-        final DeleteContainerStatement deleteContainerStatement
+        DeleteContainerStatement deleteContainerStatement
                 = new DeleteContainerStatement(CONTAINER_NAME_1);
 
         deleteContainerStatement.execute(database);
 
         final Long countAfterDeleted = cosmosDatabase.readAllContainers().stream().count();
         assertThat(countAfterDeleted).isEqualTo(1L);
+
+        // Skip Missing tests
+        assertThatCode(() -> new DeleteContainerStatement(CONTAINER_NAME_1 + "notExisting", TRUE).execute(database))
+                .doesNotThrowAnyException();
+        assertThat(cosmosDatabase.readAllContainers().stream().count()).isEqualTo(1L);
+
+        // Skip missing FALSE should fail
+        assertThatExceptionOfType(CosmosException.class)
+                .isThrownBy(() -> new DeleteContainerStatement(CONTAINER_NAME_1 + "notExisting", FALSE).execute(database))
+                .withMessageContaining("Resource Not Found.");
+
+        assertThat(cosmosDatabase.readAllContainers().stream().count()).isEqualTo(1L);
+
+        // Skip missing NULL should fail
+        assertThatExceptionOfType(CosmosException.class)
+                .isThrownBy(() -> new DeleteContainerStatement(CONTAINER_NAME_1 + "notExisting", null).execute(database))
+                .withMessageContaining("Resource Not Found.");
+
+        assertThat(cosmosDatabase.readAllContainers().stream().count()).isEqualTo(1L);
     }
 }

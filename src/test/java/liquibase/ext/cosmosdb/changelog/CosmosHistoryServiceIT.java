@@ -89,7 +89,6 @@ class CosmosHistoryServiceIT extends AbstractCosmosWithConnectionIntegrationTest
     }
 
     @Test
-    @Disabled
     void testUpgradeChecksums() {
     //TODO: implement
     }
@@ -105,7 +104,6 @@ class CosmosHistoryServiceIT extends AbstractCosmosWithConnectionIntegrationTest
     }
 
     @Test
-    @Disabled
     void testReplaceChecksum() throws Exception {
     //TODO: implement
 
@@ -131,13 +129,11 @@ class CosmosHistoryServiceIT extends AbstractCosmosWithConnectionIntegrationTest
     }
 
     @Test
-    @Disabled
     void testSetExecType() {
         //TODO: implement
     }
 
     @Test
-    @Disabled
     void testRemoveFromHistory() {
         //TODO: implement
 
@@ -165,19 +161,16 @@ class CosmosHistoryServiceIT extends AbstractCosmosWithConnectionIntegrationTest
     }
 
     @Test
-    @Disabled
     void testTag() {
         //TODO: implement
     }
 
     @Test
-    @Disabled
     void testTagExists() {
         //TODO: implement
     }
 
     @Test
-    @Disabled
     void testClearAllCheckSums() {
         //TODO: implement
     }

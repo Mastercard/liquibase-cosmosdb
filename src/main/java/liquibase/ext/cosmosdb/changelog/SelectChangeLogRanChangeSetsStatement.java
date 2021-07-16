@@ -50,7 +50,8 @@ public class SelectChangeLogRanChangeSetsStatement extends AbstractCosmosContain
     public List<CosmosRanChangeSet> readAll(final CosmosLiquibaseDatabase database) {
         final ChangeSetRepository repository = new ChangeSetRepository(database.getCosmosDatabase(), getContainerId());
         return repository.getAll().stream()
-                .sorted(Comparator.comparing(RanChangeSet::getDateExecuted)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(RanChangeSet::getDateExecuted))
+                .collect(Collectors.toList());
     }
 
     @Override

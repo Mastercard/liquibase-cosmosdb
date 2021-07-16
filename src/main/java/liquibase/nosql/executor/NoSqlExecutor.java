@@ -156,11 +156,12 @@ public class NoSqlExecutor extends AbstractExecutor {
      * TODO: Raise with Liquibase why is this used instead of
      * {@link AbstractNoSqlHistoryService#clearAllCheckSums()}
      * in {@link liquibase.Liquibase#clearCheckSums()}
+     *
      * @param updateStatement the {@link UpdateStatement} statement with MD5SUM=null
      * @throws DatabaseException in case of a failure
      */
     public void execute(final UpdateStatement updateStatement) throws DatabaseException {
-        if(updateStatement.getNewColumnValues().containsKey("MD5SUM")
+        if (updateStatement.getNewColumnValues().containsKey("MD5SUM")
                 && updateStatement.getNewColumnValues().get("MD5SUM") == null) {
             try {
                 ChangeLogHistoryServiceFactory.getInstance()

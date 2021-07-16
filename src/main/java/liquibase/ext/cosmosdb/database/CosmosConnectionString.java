@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.azure.cosmos.implementation.apachecommons.lang.StringUtils.EMPTY;
 import static liquibase.ext.cosmosdb.statement.JsonUtils.OBJECT_MAPPER;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -64,7 +65,7 @@ public class CosmosConnectionString {
         }
 
         try {
-            final String json = jsonConnectionString.replaceFirst(COSMOSDB_PREFIX, "");
+            final String json = jsonConnectionString.replaceFirst(COSMOSDB_PREFIX, EMPTY);
 
             @SuppressWarnings("unchecked")
             final Map<String, String> properties = OBJECT_MAPPER.readValue(json, Map.class);
@@ -91,7 +92,7 @@ public class CosmosConnectionString {
             final Map<String, String> properties = new HashMap<>(urlBuilder.getQuery());
             urlBuilder.setQuery(null);
 
-            final String databaseName = urlBuilder.getPath().replace("/", "");
+            final String databaseName = urlBuilder.getPath().replace("/", EMPTY);
             urlBuilder.setPath(null);
 
             properties.put(ACCOUNT_ENDPOINT_PROPERTY, urlBuilder.toString());

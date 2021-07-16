@@ -13,6 +13,7 @@ import java.sql.DriverPropertyInfo;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import static com.azure.cosmos.implementation.apachecommons.lang.StringUtils.EMPTY;
 import static liquibase.ext.cosmosdb.database.CosmosConnection.LIQUIBASE_EXTENSION_USER_AGENT_SUFFIX;
 import static liquibase.ext.cosmosdb.database.CosmosConnectionString.COSMOSDB_PREFIX;
 
@@ -28,8 +29,8 @@ public class CosmosClientDriver implements Driver {
         final CosmosClient client;
         try {
             client = new CosmosClientBuilder()
-                    .endpoint(cosmosConnectionString.getAccountEndpoint().orElse(""))
-                    .key(cosmosConnectionString.getAccountKey().orElse(""))
+                    .endpoint(cosmosConnectionString.getAccountEndpoint().orElse(EMPTY))
+                    .key(cosmosConnectionString.getAccountKey().orElse(EMPTY))
                     .consistencyLevel(ConsistencyLevel.EVENTUAL)
                     .userAgentSuffix(LIQUIBASE_EXTENSION_USER_AGENT_SUFFIX)
                     .buildClient();

@@ -81,15 +81,16 @@ public class CosmosHistoryService extends AbstractNoSqlHistoryService<CosmosLiqu
 
     @Override
     protected void dropRepository() throws DatabaseException {
-        getExecutor().execute(
-                new DeleteContainerStatement(getDatabaseChangeLogTableName()));
+        getExecutor().execute(new DeleteContainerStatement(getDatabaseChangeLogTableName()));
     }
 
     @Override
     protected List<RanChangeSet> queryRanChangeSets() throws DatabaseException {
 
         return getExecutor().queryForList(new SelectChangeLogRanChangeSetsStatement(getDatabaseChangeLogTableName()), RanChangeSet.class)
-                .stream().map(RanChangeSet.class::cast).collect(Collectors.toList());
+                .stream()
+                .map(RanChangeSet.class::cast)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -98,8 +99,9 @@ public class CosmosHistoryService extends AbstractNoSqlHistoryService<CosmosLiqu
     }
 
     @Override
-    protected void markChangeSetRun(final ChangeSet changeSet, final ChangeSet.ExecType execType, final Integer nextSequenceValue)
-            throws DatabaseException {
+    protected void markChangeSetRun(final ChangeSet changeSet,
+                                    final ChangeSet.ExecType execType,
+                                    final Integer nextSequenceValue) throws DatabaseException {
 
         final NoSqlExecutor executor = getExecutor();
 
@@ -115,7 +117,7 @@ public class CosmosHistoryService extends AbstractNoSqlHistoryService<CosmosLiqu
         String tag = null;
         for (Change change : changeSet.getChanges()) {
             if (change instanceof TagDatabaseChange) {
-                TagDatabaseChange tagChange = (TagDatabaseChange) change;
+                final TagDatabaseChange tagChange = (TagDatabaseChange) change;
                 tag = StringUtil.trimToNull(tagChange.getTag());
             }
         }

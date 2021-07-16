@@ -31,19 +31,18 @@ import liquibase.executor.ExecutorService;
 import liquibase.ext.cosmosdb.statement.DeleteAllContainersStatement;
 import liquibase.nosql.database.AbstractNoSqlDatabase;
 import liquibase.nosql.executor.NoSqlExecutor;
+import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 
 import static java.util.Optional.ofNullable;
 
+@NoArgsConstructor
 public class CosmosLiquibaseDatabase extends AbstractNoSqlDatabase {
 
     public static final String COSMOSDB_PRODUCT_NAME = "Cosmos DB";
     public static final String COSMOSDB_PRODUCT_SHORT_NAME = "cosmosdb";
     public static final int DEFAULT_PORT = 8081;
-
-    public CosmosLiquibaseDatabase() {
-    }
 
     @Override
     public void dropDatabaseObjects(final CatalogAndSchema schemaToDrop) throws LiquibaseException {

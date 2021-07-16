@@ -31,6 +31,8 @@ import lombok.Setter;
 import java.util.Date;
 import java.util.Optional;
 
+import static com.azure.cosmos.implementation.apachecommons.lang.StringUtils.EMPTY;
+
 @Getter
 @Setter
 public class ReplaceLockChangeLogStatement extends AbstractCosmosContainerStatement
@@ -42,7 +44,7 @@ public class ReplaceLockChangeLogStatement extends AbstractCosmosContainerStatem
     protected static final String HOST_ADDRESS;
     public static final String LIQUIBASE_HOST_DESCRIPTION = "liquibase.hostDescription";
     protected static final String HOST_DESCRIPTION
-            = Optional.ofNullable(System.getProperty(LIQUIBASE_HOST_DESCRIPTION)).map("#"::concat).orElse("");
+            = Optional.ofNullable(System.getProperty(LIQUIBASE_HOST_DESCRIPTION)).map("#"::concat).orElse(EMPTY);
 
     static {
         try {

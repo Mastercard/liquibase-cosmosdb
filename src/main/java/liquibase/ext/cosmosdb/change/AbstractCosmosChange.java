@@ -23,7 +23,6 @@ package liquibase.ext.cosmosdb.change;
 import liquibase.change.AbstractChange;
 import liquibase.database.Database;
 import liquibase.ext.cosmosdb.database.CosmosLiquibaseDatabase;
-import lombok.Setter;
 
 public abstract class AbstractCosmosChange extends AbstractChange {
 

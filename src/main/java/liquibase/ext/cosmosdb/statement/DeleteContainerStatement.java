@@ -20,7 +20,6 @@ package liquibase.ext.cosmosdb.statement;
  * #L%
  */
 
-import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import liquibase.ext.cosmosdb.database.CosmosLiquibaseDatabase;
 import liquibase.nosql.statement.NoSqlExecuteStatement;
@@ -28,7 +27,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
+import static java.util.Optional.ofNullable;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -41,7 +40,7 @@ public class DeleteContainerStatement extends AbstractCosmosContainerStatement
 
     public DeleteContainerStatement(final String containerId, final Boolean skipMissing) {
         super(containerId);
-        this.skipMissing = skipMissing;
+        this.skipMissing = ofNullable(skipMissing).orElse(FALSE);
     }
 
     public DeleteContainerStatement(final String containerId) {
@@ -71,13 +70,17 @@ public class DeleteContainerStatement extends AbstractCosmosContainerStatement
 
     @Override
     public void execute(final CosmosLiquibaseDatabase database) {
-        if (TRUE.equals(skipMissing) && database.getCosmosDatabase().readAllContainers()
-                .stream().map(CosmosContainerProperties::getId).noneMatch(c -> c.equals(containerId))) {
-            return;
+        if (!canSkipIfMissing(database)) {
+            database.getCosmosDatabase().getContainer(containerId).delete();
         }
+    }
 
-        final CosmosContainer cosmosContainer = database.getCosmosDatabase().getContainer(containerId);
-        cosmosContainer.delete();
+    private boolean canSkipIfMissing(final CosmosLiquibaseDatabase database) {
+        return skipMissing && database.getCosmosDatabase()
+                .readAllContainers()
+                .stream()
+                .map(CosmosContainerProperties::getId)
+                .noneMatch(c -> c.equals(containerId));
     }
 
 }

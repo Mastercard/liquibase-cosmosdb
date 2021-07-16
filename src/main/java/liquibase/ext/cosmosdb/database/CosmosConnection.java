@@ -28,8 +28,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Driver;
+import java.util.Optional;
 import java.util.Properties;
 
+import static com.azure.cosmos.implementation.apachecommons.lang.StringUtils.EMPTY;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static liquibase.ext.cosmosdb.database.CosmosConnectionString.ACCOUNT_ENDPOINT_PROPERTY;
@@ -52,7 +54,7 @@ public class CosmosConnection extends AbstractNoSqlConnection {
 
     @Override
     public String getCatalog() throws DatabaseException {
-        return this.cosmosConnectionString.getDatabaseName().orElse("");
+        return this.cosmosConnectionString.getDatabaseName().orElse(EMPTY);
     }
 
     @Override
@@ -82,13 +84,13 @@ public class CosmosConnection extends AbstractNoSqlConnection {
     @Override
     public String getURL() {
         return ofNullable(cosmosConnectionString)
-                .map(CosmosConnectionString::toUrl).orElse("");
+                .map(CosmosConnectionString::toUrl).orElse(EMPTY);
     }
 
     @Override
     public String getConnectionUserName() {
         return ofNullable(this.cosmosConnectionString)
-                .flatMap(CosmosConnectionString::getAccountEndpoint).orElse("");
+                .flatMap(CosmosConnectionString::getAccountEndpoint).orElse(EMPTY);
     }
 
     @Override
@@ -113,7 +115,7 @@ public class CosmosConnection extends AbstractNoSqlConnection {
         open(fromConnectionString(url), driverObject, driverProperties);
     }
 
-    public void open(final CosmosConnectionString cosmosConnectionString, final Driver driverObject, final Properties driverProperties) throws DatabaseException {
+    public void open(final CosmosConnectionString cosmosConnectionString, final Driver driverObject, final Properties driverProperties) throws DatabaseException {//NOSONAR
 
         this.cosmosConnectionString = cosmosConnectionString;
 
@@ -126,13 +128,14 @@ public class CosmosConnection extends AbstractNoSqlConnection {
 
         this.cosmosClient = ((CosmosClientDriver) driverObject).connect(cosmosConnectionString);
 
-        final String databaseName = cosmosConnectionString.getDatabaseName().get();
-
-        try {
-            this.cosmosClient.createDatabaseIfNotExists(databaseName);
-            this.cosmosDatabase = this.cosmosClient.getDatabase(databaseName);
-        } catch (final Exception e) {
-            throw new DatabaseException("Could not create database: " + databaseName, e);
+        final Optional<String> databaseName = cosmosConnectionString.getDatabaseName();
+        if (databaseName.isPresent()) {
+            try {
+                this.cosmosClient.createDatabaseIfNotExists(databaseName.get());
+                this.cosmosDatabase = this.cosmosClient.getDatabase(databaseName.get());
+            } catch (final Exception e) {
+                throw new DatabaseException("Could not create database: " + databaseName.get(), e);
+            }
         }
     }
 

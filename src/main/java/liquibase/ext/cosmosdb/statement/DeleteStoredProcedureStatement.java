@@ -75,14 +75,16 @@ public class DeleteStoredProcedureStatement extends AbstractCosmosContainerState
 
         final CosmosScripts cosmosScripts = database.getCosmosDatabase().getContainer(getContainerId()).getScripts();
 
-        if (skipMissing) {
-            if (cosmosScripts.readAllStoredProcedures()
-                    .stream().noneMatch(p -> p.getId().equals(procedureProperties.getId()))) {
+        if (skipMissing && isProcedureMissing(cosmosScripts)) {
                 // Do nothing as #skipMissing is TRUE and procedure is not found
                 return;
-            }
         }
         cosmosScripts.getStoredProcedure(procedureProperties.getId()).delete();
+    }
+
+    private boolean isProcedureMissing(final CosmosScripts cosmosScripts) {
+        return cosmosScripts.readAllStoredProcedures()
+            .stream().noneMatch(p -> p.getId().equals(procedureProperties.getId()));
     }
 
 }

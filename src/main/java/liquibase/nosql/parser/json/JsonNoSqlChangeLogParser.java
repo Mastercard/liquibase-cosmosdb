@@ -1,5 +1,25 @@
 package liquibase.nosql.parser.json;
 
+/*-
+ * #%L
+ * Liquibase NoSql Extension
+ * %%
+ * Copyright (C) 2020 Mastercard
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -34,9 +54,10 @@ import static liquibase.plugin.Plugin.PRIORITY_SPECIALIZED;
 public class JsonNoSqlChangeLogParser implements ChangeLogParser {
 
     public static final String RAW_JSON_FIELD = "$rawJson";
-    protected Logger log = Scope.getCurrentScope().getLog(getClass());
 
-    protected ObjectMapper objectMapper = new JsonMapper();
+    protected static final ObjectMapper objectMapper = new JsonMapper();
+
+    protected Logger log = Scope.getCurrentScope().getLog(getClass());
 
     @Override
     public int getPriority() {
@@ -51,7 +72,7 @@ public class JsonNoSqlChangeLogParser implements ChangeLogParser {
      * @return true if the file format is supported, false if it is not.
      */
     @Override
-    public boolean supports(String changeLogFile, ResourceAccessor resourceAccessor) {
+    public boolean supports(final String changeLogFile, final ResourceAccessor resourceAccessor) {
         for (String extension : getSupportedFileExtensions()) {
             if (changeLogFile.toLowerCase().endsWith("." + extension)) {
                 return true;
@@ -72,7 +93,8 @@ public class JsonNoSqlChangeLogParser implements ChangeLogParser {
      * Parses a Liquibase database changelog and returns the parsed form as an object.
      *
      * @param physicalChangeLogLocation the physical location of the changelog. The exakt file formats and locations
-     *                                  where can load changelog files from depend on the implementations and capabilities of the implementing parsers.
+     *                                  where can load changelog files from depend on the implementations
+     *                                  and capabilities of the implementing parsers.
      * @param changeLogParameters       parameters given by the end user that should be applied while parsing the changelog
      *                                  (i.e. replacement of ${placeholders} inside the changelogs with user-defined content)
      * @param resourceAccessor          a Java resource accessor
@@ -80,7 +102,10 @@ public class JsonNoSqlChangeLogParser implements ChangeLogParser {
      * @throws ChangeLogParseException if an error occurs during parsing of the ChangeLog
      */
     @Override
-    public DatabaseChangeLog parse(final String physicalChangeLogLocation, final ChangeLogParameters changeLogParameters, final ResourceAccessor resourceAccessor) throws ChangeLogParseException {
+    public DatabaseChangeLog parse(final String physicalChangeLogLocation,
+                                   final ChangeLogParameters changeLogParameters,
+                                   final ResourceAccessor resourceAccessor) throws ChangeLogParseException {
+
         try (InputStream changeLogStream = resourceAccessor.openStream(null, physicalChangeLogLocation)) {
             if (changeLogStream == null) {
                 throw new ChangeLogParseException(physicalChangeLogLocation + " does not exist");
@@ -126,7 +151,6 @@ public class JsonNoSqlChangeLogParser implements ChangeLogParser {
                 }
             }
 
-
             replaceParameters(parsedJson, changeLogParameters, changeLog);
 
             changeLog.setChangeLogParameters(changeLogParameters);
@@ -139,17 +163,25 @@ public class JsonNoSqlChangeLogParser implements ChangeLogParser {
             changeLog.load(databaseChangeLogNode, resourceAccessor);
 
             return changeLog;
-        } catch (ChangeLogParseException e) {
+        } catch (final ChangeLogParseException e) {
             throw e;
         } catch (Exception e) {
             throw new ChangeLogParseException("Error parsing " + physicalChangeLogLocation, e);
         }
     }
 
-    private void loadChangeLogParametersFromFile(ChangeLogParameters changeLogParameters, ResourceAccessor resourceAccessor, DatabaseChangeLog changeLog, JsonNode property, ContextExpression context, Labels labels, Boolean global) throws IOException {
-        Properties props = new Properties();
+    private void loadChangeLogParametersFromFile(final ChangeLogParameters changeLogParameters,
+                                                 final ResourceAccessor resourceAccessor,
+                                                 final DatabaseChangeLog changeLog,
+                                                 final JsonNode property,
+                                                 final ContextExpression context,
+                                                 final Labels labels,
+                                                 final Boolean global) throws IOException {
+
+        final Properties props = new Properties();
+
         try (
-                InputStream propertiesStream = resourceAccessor.openStream(null, property.get("file").asText())) {
+                final InputStream propertiesStream = resourceAccessor.openStream(null, property.get("file").asText())) {
 
             if (propertiesStream == null) {
                 getLogger().info("Could not open properties file " + property.get("file"));
@@ -182,7 +214,10 @@ public class JsonNoSqlChangeLogParser implements ChangeLogParser {
     }
 
     @SneakyThrows
-    protected void replaceParameters(TreeNode obj, ChangeLogParameters changeLogParameters, DatabaseChangeLog changeLog) {
+    protected void replaceParameters(final TreeNode obj,
+                                     final ChangeLogParameters changeLogParameters,
+                                     final DatabaseChangeLog changeLog) {
+
         if (obj.isObject()) {
             final ObjectNode objectNode = (ObjectNode) obj;
             final Iterator<Map.Entry<String, JsonNode>> fields = objectNode.fields();
@@ -191,7 +226,7 @@ public class JsonNoSqlChangeLogParser implements ChangeLogParser {
                 if (entry.getValue().isValueNode()) {
                     objectNode.put(entry.getKey(),
                             changeLogParameters.expandExpressions(entry.getValue().asText(), changeLog));
-                } else if (entry.getValue().isObject() && entry.getValue().has(RAW_JSON_FIELD)) {
+                } else if (isRawJsonField(entry)) {
                     final JsonNode jsonPayload = entry.getValue().get(RAW_JSON_FIELD);
                     objectNode.put(entry.getKey(),
                             changeLogParameters.expandExpressions(jsonPayload.toPrettyString(), changeLog));
@@ -212,5 +247,9 @@ public class JsonNoSqlChangeLogParser implements ChangeLogParser {
                 }
             }
         }
+    }
+
+    private boolean isRawJsonField(final Map.Entry<String, JsonNode> entry){
+        return entry.getValue().isObject() && entry.getValue().has(RAW_JSON_FIELD);
     }
 }

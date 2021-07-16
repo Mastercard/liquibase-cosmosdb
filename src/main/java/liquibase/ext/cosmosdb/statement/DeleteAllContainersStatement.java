@@ -60,9 +60,13 @@ public class DeleteAllContainersStatement extends AbstractCosmosStatement
 
     @Override
     public void execute(final CosmosLiquibaseDatabase database) {
-        database.getCosmosDatabase().readAllContainers().stream()
-                .map(CosmosContainerProperties::getId).filter(id -> !ignoreContainerIds.contains(id))
-                .map((id) -> database.getCosmosDatabase().getContainer(id)).forEach(CosmosContainer::delete);
+        database.getCosmosDatabase()
+                .readAllContainers()
+                .stream()
+                .map(CosmosContainerProperties::getId)
+                .filter(id -> !ignoreContainerIds.contains(id))
+                .map(id -> database.getCosmosDatabase().getContainer(id))
+                .forEach(CosmosContainer::delete);
     }
 
 }

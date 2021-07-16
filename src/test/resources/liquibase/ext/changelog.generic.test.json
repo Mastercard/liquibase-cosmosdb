@@ -1,0 +1,32 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "1",
+        "author": "Test user",
+        "labels": "1.0",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "test",
+              "columns": [
+                {
+                  "column": {
+                    "name": "firstname",
+                    "type": "varchar(50)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "lastname",
+                    "type": "varchar(50)"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

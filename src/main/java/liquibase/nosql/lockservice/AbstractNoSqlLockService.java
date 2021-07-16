@@ -175,7 +175,7 @@ public abstract class AbstractNoSqlLockService<D extends AbstractNoSqlDatabase> 
                 this.hasChangeLogLock = true;
 
                 // TODO: Not sure what is the purpose of this
-                // this.database.setCanCacheLiquibaseTableInfo(true);
+                //NOSONAR this.database.setCanCacheLiquibaseTableInfo(true);
 
                 return true;
             }

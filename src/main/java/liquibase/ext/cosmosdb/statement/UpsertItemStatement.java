@@ -31,7 +31,7 @@ import static liquibase.ext.cosmosdb.statement.JsonUtils.orEmptyDocument;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public class UpsertItemStatement extends CreateItemStatement {
+public class UpsertItemStatement extends CreateItemStatement {//NOSONAR
 
     public static final String COMMAND_NAME = "upsertItem";
 
